@@ -24,6 +24,11 @@ mongoose
 // applying routes
 app.use('/',notesRoute);
 
-app.listen(PORT,()=>{
-    console.log(`Server is running at: http://localhost:3000`)
+app.get("/", (req, res) => {
+  res.send("Backend is alive");
+});
+
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server is running on port ${PORT}`);
 });
