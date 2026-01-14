@@ -7,6 +7,7 @@ dotenv.config();
 
 // importing routes
 import notesRoute from './routes/notesRoute.js';
+import authRoute from './routes/authRoute.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,6 +24,7 @@ mongoose
 
 // applying routes
 app.use('/',notesRoute);
+app.use('/auth', authRoute);
 
 app.get("/", (req, res) => {
   res.send("Backend is alive");

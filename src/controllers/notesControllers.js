@@ -4,7 +4,7 @@ import Notes from '../../models/Notes.js';
 // controller to fetch notes
 const fetchNotes = async (req, res) => {
     try {
-        const notes = await Notes.find();
+        const notes = await Notes.find({ user: req.user.id });
 
         if (!notes || notes.length === 0) {
             return res.status(404).json({
@@ -29,8 +29,7 @@ const fetchNotes = async (req, res) => {
 // controller to fetch a specific note through id
 const fetchNoteById = async (req, res) => {
     try {
-        const { id } = req.params;
-        const note = await Notes.findById(id);
+        const note = await Notes.findOne({_id: req.params.id, user: req.user.id});
 
         if (!note) {
             return res.status(404).json({
@@ -55,12 +54,12 @@ const fetchNoteById = async (req, res) => {
 // controller to create note
 const createNote = async (req, res) => {
     try {
-        const { creator, title, content } = req.body;
+        const { title, content } = req.body;
 
         const newNote = await Notes.create({
             title: title,
             content: content,
-            creator: creator,
+            user: req.user.id,
             createdAt: new Date()
         });
 
@@ -70,6 +69,7 @@ const createNote = async (req, res) => {
             status: 200,
         })
     } catch (err) {
+        console.log(err)
         res.status(400).json({ 
             message: "Error creating note",
             error: err.message 
@@ -80,11 +80,10 @@ const createNote = async (req, res) => {
 // controller to update notes
 const updateNote = async (req, res) => {
     try {
-        const { id } = req.params;
         const { title, content } = req.body;
 
-        const updatedNote = await Notes.findByIdAndUpdate(
-            id,
+        const updatedNote = await Notes.findOneAndUpdate(
+            {_id: req.params.id, user: req.user.id},
             {
                 title: title,
                 content: content
@@ -115,9 +114,8 @@ const updateNote = async (req, res) => {
 // controller to delete a note
 const deleteNote = async (req, res) => {
     try {
-        const { id } = req.params;
 
-        const deletedNote = await Notes.findByIdAndDelete(id);
+        const deletedNote = await Notes.findOneAndDelete({_id: req.params.id, user:req.user.id});
 
         if (!deletedNote) {
             return res.status(404).json({
