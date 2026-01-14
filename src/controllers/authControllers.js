@@ -37,14 +37,14 @@ const login = async (req, res) => {
         // check whether this email exist
         const user = await User.findOne({ email });
         if (!user) {
-           return res.status(201).json({ message: "Invalid Credentials" })
+           return res.status(401).json({ message: "Invalid Credentials" })
         }
 
         // compare passwords
         const correctPassword = await bcrypt.compare(password, user.password);
 
         if (!correctPassword) {
-            return res.status(201).json({ message: "Invalid Credentials" })
+            return res.status(401).json({ message: "Invalid Credentials" })
 
         }
 
